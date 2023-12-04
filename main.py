@@ -1,14 +1,13 @@
 from telegram.ext import ApplicationBuilder
 
 from config.settings import settings
-from gallery import command_handlers
+from gallery import conversation_handler
 
 
 def main():
-    app = ApplicationBuilder().token(token=settings.TOKEN).build()
+    app = ApplicationBuilder().token(token=settings.TELEGRAM_TOKEN).build()
 
-    for command in command_handlers:
-        app.add_handler(command)
+    app.add_handler(conversation_handler)
 
     app.run_polling(poll_interval=3)
 

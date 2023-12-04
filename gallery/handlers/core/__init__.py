@@ -1,1 +1,1 @@
-from .functions import cancel
+from .functions import cancel, immediate_send

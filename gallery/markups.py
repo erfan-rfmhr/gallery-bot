@@ -6,4 +6,8 @@ _main_markups = [
     ['زمانبندی'],
 ]
 
+_cancel_markup = [['لغو']]
+
 MAIN_MENU = ReplyKeyboardMarkup(keyboard=_main_markups, resize_keyboard=True)
+
+CANCEL = ReplyKeyboardMarkup(keyboard=_cancel_markup, resize_keyboard=True)

@@ -25,3 +25,18 @@ async def perform_immediate_send(update: Update, context: ContextTypes.DEFAULT_T
     await post_image(caption='test')
     await update.message.reply_text('پست ارسال شد.', reply_markup=MAIN_MENU)
     return STATES.START
+
+
+async def send_news(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text('پست مورد نظر را ارسال کنید(عکس به همراه کپشن).', reply_markup=CANCEL)
+    return STATES.SEND_NEWS
+
+
+async def perform_send_news(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    bot = context.bot
+    file = await bot.get_file(update.message.photo[-1].file_id)
+    photo = await file.download_to_drive()
+    await post_image(caption=update.message.caption, filename=photo.name)
+    await update.message.reply_text('پست ارسال شد.', reply_markup=MAIN_MENU, connect_timeout=100, pool_timeout=100,
+                                    read_timeout=100, write_timeout=100)
+    return STATES.START

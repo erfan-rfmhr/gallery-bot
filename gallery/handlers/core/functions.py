@@ -18,6 +18,8 @@ async def immediate_send(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def perform_immediate_send(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    bot = context.bot
+    await bot.send_chat_action(chat_id=update.message.chat_id, action='typing')
     link = update.message.text
     await download_image(link)
     await post_image('temp.jpg')

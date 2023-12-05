@@ -17,7 +17,7 @@ class PostService:
 
     def upload_to_instagram(self, filename: str):
         bot = self.insta_bot
-        bot.login(username=self.insta_username, password=self.insta_password)
+        bot.login(username=self.insta_username, password=self.insta_password, use_cookie=False)
         bot.upload_photo(photo=filename, caption=self.caption)
 
     async def upload_to_telegram(self, filename: str):

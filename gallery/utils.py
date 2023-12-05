@@ -17,4 +17,8 @@ async def post_image(filename: str):
     """Post image to telegram and remove it from disk"""
     post_service = PostService(caption='تست')
     await post_service.upload_to_telegram(filename=filename)
-    os.remove('temp.jpg')
+    post_service.upload_to_instagram(filename=filename)
+    if os.path.exists('temp.jpg.REMOVE_ME'):
+        os.remove('temp.jpg.REMOVE_ME')
+    if os.path.exists('temp.jpg'):
+        os.remove('temp.jpg')

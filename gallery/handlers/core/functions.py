@@ -22,6 +22,6 @@ async def perform_immediate_send(update: Update, context: ContextTypes.DEFAULT_T
     await bot.send_chat_action(chat_id=update.message.chat_id, action='typing')
     link = update.message.text
     await download_image(link)
-    await post_image('temp.jpg')
+    await post_image(caption='test')
     await update.message.reply_text('پست ارسال شد.', reply_markup=MAIN_MENU)
     return STATES.START

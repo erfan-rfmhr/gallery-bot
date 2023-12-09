@@ -1,3 +1,5 @@
+from threading import Thread
+
 from telegram import Update
 from telegram.ext import ContextTypes
 
@@ -22,7 +24,7 @@ async def perform_immediate_send(update: Update, context: ContextTypes.DEFAULT_T
     await bot.send_chat_action(chat_id=update.message.chat_id, action='typing')
     link = update.message.text
     image_src = await download_image(link)
-    await post_image('test', telegram_bot=bot, source=image_src)
+    Thread(target=post_image, args=('test', bot, image_src)).start()
     await update.message.reply_text('پست ارسال شد.', reply_markup=MAIN_MENU)
     return STATES.START
 
@@ -37,7 +39,9 @@ async def perform_send_news(update: Update, context: ContextTypes.DEFAULT_TYPE):
     file = await bot.get_file(update.message.photo[-1].file_id)
     photo = await file.download_to_drive()
     # TODO: can not upload to facebook because we don't have image source
-    await post_image(caption=update.message.caption, filename=photo.name, source=None, telegram_bot=bot)
-    await update.message.reply_text('پست ارسال شد.', reply_markup=MAIN_MENU, connect_timeout=100, pool_timeout=100,
+    Thread(target=post_image, args=(update.message.caption, bot, None, photo.name)).start()
+
+    await update.message.reply_text('پست در حال ارسال است.', reply_markup=MAIN_MENU, connect_timeout=100,
+                                    pool_timeout=100,
                                     read_timeout=100, write_timeout=100)
     return STATES.START

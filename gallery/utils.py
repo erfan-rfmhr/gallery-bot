@@ -19,14 +19,14 @@ def remove_image(filename: str = 'temp.jpg'):
         os.remove(filename)
 
 
-async def download_image(link: str, filename: str = 'temp.jpg') -> str:
+async def download_image(link: str, filename: str = 'temp.jpg'):
     """Download image from link and save it to temp.jpg"""
     scrap_service = ScrapService(link)
     text = await scrap_service.fetch_url()
-    image_src = await scrap_service.parse(text)
-    image = await scrap_service.download_image(image_src)
-    save_image(image, filename=filename)
-    return image_src
+    image = await scrap_service.parse(text)
+    image_content = await scrap_service.download_image(image.src)
+    save_image(image_content, filename=filename)
+    return image
 
 
 def post_image(caption: str, telegram_bot: TelegramBot, source: str | None = None, filename: str = 'temp.jpg'):

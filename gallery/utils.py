@@ -1,5 +1,7 @@
 import os
 
+from telegram import Bot as TelegramBot
+
 from services.post import PostService
 from services.scrap import ScrapService
 
@@ -26,10 +28,10 @@ async def download_image(link: str, filename: str = 'temp.jpg') -> str:
     return image_src
 
 
-async def post_image(caption: str, source: str | None = None, filename: str = 'temp.jpg'):
+async def post_image(caption: str, telegram_bot: TelegramBot, source: str | None = None, filename: str = 'temp.jpg'):
     """Post image to telegram and remove it from disk"""
     post_service = PostService(caption, source)
-    await post_service.upload_to_telegram(filename=filename)
+    await post_service.upload_to_telegram(filename=filename, bot=telegram_bot)
     await post_service.upload_to_facebook()
     # await post_service.upload_to_instagram(filename=filename)
     remove_image(filename=filename)

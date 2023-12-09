@@ -16,16 +16,19 @@ def remove_image(filename: str = 'temp.jpg'):
         os.remove(filename)
 
 
-async def download_image(link: str, filename: str = 'temp.jpg'):
+async def download_image(link: str, filename: str = 'temp.jpg') -> str:
     """Download image from link and save it to temp.jpg"""
     scrap_service = ScrapService(link)
-    image = await scrap_service.download_image()
+    text = await scrap_service.fetch_url()
+    image_src = await scrap_service.parse(text)
+    image = await scrap_service.download_image(image_src)
     save_image(image, filename=filename)
+    return image_src
 
 
-async def post_image(caption: str, filename: str = 'temp.jpg'):
+async def post_image(caption: str, source: str | None = None, filename: str = 'temp.jpg'):
     """Post image to telegram and remove it from disk"""
-    post_service = PostService(caption=caption)
+    post_service = PostService(caption, source)
     await post_service.upload_to_telegram(filename=filename)
     await post_service.upload_to_facebook()
     # await post_service.upload_to_instagram(filename=filename)

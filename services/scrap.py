@@ -17,9 +17,8 @@ class ScrapService:
         image_src = soup.main.div.div.div.img['src']
         return image_src
 
-    async def download_image(self) -> bytes:
-        content = await self.fetch_url()
-        image_src = await self.parse(text=content)
+    @staticmethod
+    async def download_image(image_src: str) -> bytes:
         async with httpx.AsyncClient() as client:
             r = await client.get(url=image_src)
             return r.content

@@ -10,8 +10,9 @@ class PostService:
     # insta_username = settings.INSTAGRAM_USERNAME
     # insta_password = settings.INSTAGRAM_PASSWORD
 
-    def __init__(self, caption: str):
+    def __init__(self, caption: str, source: str | None):
         self.caption = caption
+        self.source = source
 
     # async def upload_to_instagram(self, filename: str):
     #     bot = self.insta_bot
@@ -26,9 +27,11 @@ class PostService:
         await bot.close()
 
     async def upload_to_facebook(self):
-        async with httpx.AsyncClient() as client:
-            payload = {
-                'message': self.caption,
-                'access_token': settings.FACEBOOK_TOKEN
-            }
-            await client.post(url=settings.FACEBOOK_URL, data=payload)
+        if self.source is not None:
+            async with httpx.AsyncClient() as client:
+                payload = {
+                    'url': self.source,
+                    'message': self.caption,
+                    'access_token': settings.FACEBOOK_TOKEN
+                }
+                await client.post(url=settings.FACEBOOK_URL, data=payload)

@@ -21,8 +21,8 @@ async def perform_immediate_send(update: Update, context: ContextTypes.DEFAULT_T
     bot = context.bot
     await bot.send_chat_action(chat_id=update.message.chat_id, action='typing')
     link = update.message.text
-    await download_image(link)
-    await post_image(caption='test')
+    image_src = await download_image(link)
+    await post_image('test', image_src)
     await update.message.reply_text('پست ارسال شد.', reply_markup=MAIN_MENU)
     return STATES.START
 
@@ -36,7 +36,8 @@ async def perform_send_news(update: Update, context: ContextTypes.DEFAULT_TYPE):
     bot = context.bot
     file = await bot.get_file(update.message.photo[-1].file_id)
     photo = await file.download_to_drive()
-    await post_image(caption=update.message.caption, filename=photo.name)
+    # TODO: can not upload to facebook because we don't have image source
+    await post_image(caption=update.message.caption, filename=photo.name, source=None)
     await update.message.reply_text('پست ارسال شد.', reply_markup=MAIN_MENU, connect_timeout=100, pool_timeout=100,
                                     read_timeout=100, write_timeout=100)
     return STATES.START

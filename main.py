@@ -1,10 +1,12 @@
 from telegram.ext import ApplicationBuilder
 
 from config.settings import settings
+from database import create_db
 from gallery import conversation_handler
 
 
 def main():
+    create_db()
     app = ApplicationBuilder().token(token=settings.TELEGRAM_TOKEN).build()
 
     app.add_handler(conversation_handler)

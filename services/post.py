@@ -10,7 +10,7 @@ class PostService:
     # insta_username = settings.INSTAGRAM_USERNAME
     # insta_password = settings.INSTAGRAM_PASSWORD
 
-    def __init__(self, caption: str, source: str | None):
+    def __init__(self, caption: str, source: str | None = None):
         self.caption = caption
         self.source = source
 

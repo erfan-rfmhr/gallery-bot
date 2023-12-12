@@ -11,6 +11,7 @@ class BotSettings(BaseSettings):
     INSTAGRAM_PASSWORD: str
     FACEBOOK_URL: str
     FACEBOOK_TOKEN: str
+    TIME_ZONE: str = 'Asia/Tehran'
 
 
 state_names = ('START', 'SEND_NEW_LINK', 'LINKS_IN_QUEUE', 'SEND_NOW', 'SEND_NEWS', 'SET_PUBLIC_HASHTAGS', 'SCHEDULE',)

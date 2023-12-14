@@ -321,3 +321,4 @@ pip-selfcheck.json
 
 # Sqlite
 *.sqlite3
+*.db

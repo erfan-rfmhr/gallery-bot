@@ -1,16 +1,37 @@
+from datetime import time
 from threading import Thread
 
+import pytz
 from telegram import Update
 from telegram.ext import ContextTypes
 
 from config.settings import STATES
+from config.settings import settings
 from gallery.markups import CANCEL
 from gallery.markups import MAIN_MENU
-from gallery.utils import download_image, post_image
+from gallery.utils import download_image, post_image, post_task
 
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('لغو شد', reply_markup=MAIN_MENU)
+    return STATES.START
+
+
+async def scheduling(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text('ساعت های مورد نظر را با فرمت زیر بفرستید.', reply_markup=CANCEL)
+    await update.message.reply_text('times:\n8:00\n20:30\n3:10', reply_markup=CANCEL)
+    return STATES.SCHEDULE
+
+
+async def perform_scheduling(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.chat_data['id'] = update.message.chat_id
+    times = update.message.text.split('\n')[1:]
+    for t in times:
+        h, m = t.split(':')
+        context.job_queue.run_daily(post_task,
+                                    time=time(hour=int(h), minute=int(m), tzinfo=pytz.timezone(settings.TIME_ZONE)),
+                                    chat_id=update.message.chat_id)
+    await update.message.reply_text('زمانبندی انجام شد.', reply_markup=MAIN_MENU)
     return STATES.START
 
 

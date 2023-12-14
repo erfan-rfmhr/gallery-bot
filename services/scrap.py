@@ -19,8 +19,11 @@ class ScrapService:
         image_src = soup.main.div.div.div.img['src']
         image_title = soup.find('div', class_='image-title').text
         photographer = soup.find('div', class_='detail').a.text
+        hashtags_div = soup.find_all('div', class_='image-info-item')[-1]
+        a_tags = hashtags_div.find_all('a')
+        tags = [a.text for a in a_tags]
 
-        return namedtuple('Image', ('src', 'title', 'photographer'))(image_src, image_title, photographer)
+        return namedtuple('Image', ('src', 'title', 'photographer', 'tags'))(image_src, image_title, photographer, tags)
 
     @staticmethod
     async def download_image(image_src: str) -> bytes:

@@ -45,7 +45,10 @@ async def perform_immediate_send(update: Update, context: ContextTypes.DEFAULT_T
     await bot.send_chat_action(chat_id=update.message.chat_id, action='typing')
     link = update.message.text
     image = await download_image(link)
-    caption = f'{image.title} | {image.photographer}'
+    caption = f'{image.title} | {image.photographer}\n\n'
+    for tag in image.tags:
+        tag = tag.replace(' ', '')
+        caption += f'#{tag} '
     Thread(target=post_image, args=(caption, bot, image.src)).start()
     await update.message.reply_text('پست ارسال شد.', reply_markup=MAIN_MENU)
     return STATES.START

@@ -1,6 +1,6 @@
 from datetime import time
 from threading import Thread
-
+import aiosqlite
 import pytz
 from telegram import Update
 from telegram.ext import ContextTypes
@@ -14,6 +14,21 @@ from gallery.utils import download_image, post_image, post_task
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('لغو شد', reply_markup=MAIN_MENU)
+    return STATES.START
+
+
+async def send_new_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text('لینک جدید را بفرستید.', reply_markup=CANCEL)
+    return STATES.SEND_NEW_LINK
+
+
+async def perform_send_new_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    async with aiosqlite.connect('bot.db') as db:
+        links = update.message.text.split('\n')
+        for link in links:
+            await db.execute('INSERT INTO links (url) VALUES (?)', (link,))
+        await db.commit()
+    await update.message.reply_text('لینک ذخیره شد.', reply_markup=MAIN_MENU)
     return STATES.START
 
 

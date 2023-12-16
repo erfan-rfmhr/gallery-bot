@@ -57,6 +57,8 @@ async def post_task(context: ContextTypes.DEFAULT_TYPE):
         post_service = PostService(caption=caption, source=image.src)
         # TODO: add facebook and instagram
         await post_service.upload_to_telegram(filename=image.name, bot=context.bot)
+        await post_service.upload_to_instagram(filename=image.name)
+        await post_service.upload_to_facebook()
         await db.execute('UPDATE links SET isSent = 1 WHERE url = ?', (url[0],))
         await db.commit()
     remove_image(filename=image.name)

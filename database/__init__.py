@@ -10,4 +10,10 @@ async def create_db():
             isSent BOOLEAN DEFAULT FALSE
         )
         ''')
+        await db.execute('''
+        CREATE TABLE IF NOT EXISTS public_hashtags (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            tag VARCHAR(255) NOT NULL
+        )
+        ''')
         await db.commit()

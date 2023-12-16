@@ -1,4 +1,3 @@
-import hashlib
 from datetime import time
 from threading import Thread
 
@@ -110,4 +109,20 @@ async def perform_send_news(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('پست در حال ارسال است.', reply_markup=MAIN_MENU, connect_timeout=100,
                                     pool_timeout=100,
                                     read_timeout=100, write_timeout=100)
+    return STATES.START
+
+
+async def set_hashtags(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text('هشتگ های مورد نظر را با فرمت زیر بفرستید.', reply_markup=CANCEL)
+    await update.message.reply_text('hashtags:\n#tag1\n#tag2_sth\n#tag3', reply_markup=CANCEL)
+    return STATES.SET_PUBLIC_HASHTAGS
+
+
+async def perform_set_hashtags(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    hashtags = update.message.text.split('\n')[1:]
+    async with aiosqlite.connect('bot.db') as db:
+        for tag in hashtags:
+            await db.execute('INSERT INTO public_hashtags (tag) VALUES (?)', (tag,))
+        await db.commit()
+    await update.message.reply_text('هشتگ ها ذخیره شد.', reply_markup=MAIN_MENU)
     return STATES.START

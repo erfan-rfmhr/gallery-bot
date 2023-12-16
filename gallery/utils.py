@@ -1,5 +1,4 @@
 import asyncio
-import hashlib
 import os
 
 import aiosqlite
@@ -41,7 +40,7 @@ def post_image(caption: str, telegram_bot: TelegramBot, source: str | None = Non
     asyncio.set_event_loop(loop)
     loop.run_until_complete(post_service.upload_to_telegram(filename=filename, bot=telegram_bot))
     loop.run_until_complete(post_service.upload_to_facebook())
-    # await post_service.upload_to_instagram(filename=filename)
+    loop.run_until_complete(post_service.upload_to_instagram(filename=filename))
     loop.close()
     remove_image(filename=filename)
 

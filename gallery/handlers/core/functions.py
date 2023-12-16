@@ -1,5 +1,6 @@
 from datetime import time
 from threading import Thread
+
 import aiosqlite
 import pytz
 from telegram import Update
@@ -30,6 +31,18 @@ async def perform_send_new_link(update: Update, context: ContextTypes.DEFAULT_TY
         await db.commit()
     await update.message.reply_text('لینک ذخیره شد.', reply_markup=MAIN_MENU)
     return STATES.START
+
+
+async def get_links_in_queue(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    async with aiosqlite.connect('bot.db') as db:
+        cursor = await db.execute('SELECT url FROM links WHERE isSent = 0')
+        links = await cursor.fetchall()
+        if len(list(links)) == 0:
+            await update.message.reply_text('هیچ پستی برای ارسال وجود ندارد.', reply_markup=MAIN_MENU)
+        else:
+            await update.message.reply_text('پست های در صف ارسال:\n' + '\n'.join([link[0] for link in links]),
+                                            reply_markup=MAIN_MENU)
+        return STATES.START
 
 
 async def scheduling(update: Update, context: ContextTypes.DEFAULT_TYPE):

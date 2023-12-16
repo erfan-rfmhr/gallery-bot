@@ -45,6 +45,18 @@ async def get_links_in_queue(update: Update, context: ContextTypes.DEFAULT_TYPE)
         return STATES.START
 
 
+async def get_posted_links(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    async with aiosqlite.connect('bot.db') as db:
+        cursor = await db.execute('SELECT url FROM links WHERE isSent = 1')
+        links = await cursor.fetchall()
+        if len(list(links)) == 0:
+            await update.message.reply_text('هیچ پستی ارسال نشده است.', reply_markup=MAIN_MENU)
+        else:
+            await update.message.reply_text('پست های ارسال شده:\n' + '\n'.join([link[0] for link in links]),
+                                            reply_markup=MAIN_MENU)
+        return STATES.START
+
+
 async def scheduling(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('ساعت های مورد نظر را با فرمت زیر بفرستید.', reply_markup=CANCEL)
     await update.message.reply_text('times:\n8:00\n20:30\n3:10', reply_markup=CANCEL)

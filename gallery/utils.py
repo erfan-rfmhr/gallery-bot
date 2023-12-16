@@ -9,6 +9,13 @@ from services.post import PostService
 from services.scrap import ScrapService
 
 
+async def get_public_hashtags() -> list[str]:
+    async with aiosqlite.connect('bot.db') as db:
+        cursor = await db.execute('SELECT tag FROM public_hashtags')
+        tags = await cursor.fetchall()
+        return [tag[0] for tag in tags]
+
+
 def save_image(image: bytes, filename: str = 'temp.jpg'):
     with open(filename, 'wb') as f:
         f.write(image)

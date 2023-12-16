@@ -10,7 +10,7 @@ from config.settings import STATES
 from config.settings import settings
 from gallery.markups import CANCEL
 from gallery.markups import MAIN_MENU
-from gallery.utils import download_image, post_image, post_task
+from gallery.utils import download_image, post_image, post_task, get_public_hashtags
 
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -86,9 +86,18 @@ async def perform_immediate_send(update: Update, context: ContextTypes.DEFAULT_T
     link = update.message.text
     image = await download_image(link)
     caption = f'{image.title} | {image.photographer}\n\n'
+    public_hashtags = await get_public_hashtags()
+
+    # set original tags
     for tag in image.tags:
         tag = tag.replace(' ', '')
         caption += f'#{tag} '
+
+    # set public tags
+    for tag in public_hashtags:
+        tag = tag.replace(' ', '')
+        caption += f'#{tag} '
+
     Thread(target=post_image, args=(caption, bot, image.src, image.name)).start()
     await update.message.reply_text('پست ارسال شد.', reply_markup=MAIN_MENU)
     return STATES.START

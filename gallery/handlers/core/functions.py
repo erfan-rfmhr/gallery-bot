@@ -1,3 +1,4 @@
+import hashlib
 from datetime import time
 from threading import Thread
 
@@ -89,7 +90,7 @@ async def perform_immediate_send(update: Update, context: ContextTypes.DEFAULT_T
     for tag in image.tags:
         tag = tag.replace(' ', '')
         caption += f'#{tag} '
-    Thread(target=post_image, args=(caption, bot, image.src)).start()
+    Thread(target=post_image, args=(caption, bot, image.src, image.name)).start()
     await update.message.reply_text('پست ارسال شد.', reply_markup=MAIN_MENU)
     return STATES.START
 

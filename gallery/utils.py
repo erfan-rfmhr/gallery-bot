@@ -1,4 +1,5 @@
 import asyncio
+import hashlib
 import os
 
 import aiosqlite
@@ -21,13 +22,14 @@ def remove_image(filename: str = 'temp.jpg'):
         os.remove(filename)
 
 
-async def download_image(link: str, filename: str = 'temp.jpg'):
+async def download_image(link: str):
     """Download image from link and save it to temp.jpg"""
     scrap_service = ScrapService(link)
     text = await scrap_service.fetch_url()
     image = await scrap_service.parse(text)
     image_content = await scrap_service.download_image(image.src)
-    save_image(image_content, filename=filename)
+
+    save_image(image_content, filename=image.name)
     return image
 
 
@@ -55,7 +57,7 @@ async def post_task(context: ContextTypes.DEFAULT_TYPE):
         caption = f'{image.title} | {image.photographer}'
         post_service = PostService(caption=caption, source=image.src)
         # TODO: add facebook and instagram
-        await post_service.upload_to_telegram(filename='temp.jpg', bot=context.bot)
+        await post_service.upload_to_telegram(filename=image.name, bot=context.bot)
         await db.execute('UPDATE links SET isSent = 1 WHERE url = ?', (url[0],))
         await db.commit()
-    remove_image(filename='temp.jpg')
+    remove_image(filename=image.name)

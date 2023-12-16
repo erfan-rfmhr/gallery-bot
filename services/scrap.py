@@ -1,8 +1,9 @@
-from typing import Type
+import hashlib
+from collections import namedtuple
 
 import httpx
 from bs4 import BeautifulSoup
-from collections import namedtuple
+
 
 class ScrapService:
     def __init__(self, url: str):
@@ -22,8 +23,10 @@ class ScrapService:
         hashtags_div = soup.find_all('div', class_='image-info-item')[-1]
         a_tags = hashtags_div.find_all('a')
         tags = [a.text for a in a_tags]
+        name = image_title + '_' + hashlib.sha256(photographer.encode()).hexdigest() + '.jpg'
 
-        return namedtuple('Image', ('src', 'title', 'photographer', 'tags'))(image_src, image_title, photographer, tags)
+        return namedtuple('Image', ('src', 'title', 'photographer', 'tags', 'name'))(image_src, image_title,
+                                                                                     photographer, tags, name)
 
     @staticmethod
     async def download_image(image_src: str) -> bytes:
